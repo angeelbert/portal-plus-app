@@ -29,4 +29,4 @@ repo.create_tag(new_version)
 # Configure authentication using the token
 remote_url = f'https://{os.getenv("GITHUB_TOKEN")}@github.com/{os.getenv("GITHUB_REPOSITORY")}.git'
 origin = repo.create_remote('authenticated', url=remote_url)
-origin.push('refs/tags/' + new_version)
+origin.push('refs/tags/' + new_version) 
