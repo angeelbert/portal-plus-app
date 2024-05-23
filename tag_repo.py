@@ -6,7 +6,7 @@ from requests.auth import HTTPBasicAuth
 
 # Configura tus variables
 GITHUB_USER = os.getenv('GITHUB_ACTOR')
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+GITHUB_TOKEN = os.getenv('TOKEN')
 REPO_NAME = os.getenv('GITHUB_REPOSITORY').split('/')[1]
 REPO_PATH = './'  # La ruta del repositorio es la raíz del directorio de trabajo en GitHub Actions
 VERSION_TYPE = sys.argv[1]  # 'major', 'minor' or 'patch'
