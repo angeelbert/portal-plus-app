@@ -3,7 +3,7 @@ name: Tag Repository
 on:
   push:
     branches:
-    #   - main
+       - main
     #   - develop
        - feat/devops
     
