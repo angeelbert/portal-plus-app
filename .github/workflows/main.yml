@@ -28,7 +28,7 @@ jobs:
   
       - name: Run tag script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         run: |
           if [[ $GITHUB_REF == refs/heads/main ]]; then
             VERSION_TYPE=minor
