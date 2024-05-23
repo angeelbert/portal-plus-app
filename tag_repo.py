@@ -19,7 +19,7 @@ repo = git.Repo('.')
 try:
     current_version = repo.git.describe(tags=True, abbrev=0)
 except git.exc.GitCommandError:
-    current_version = 'v0.1.0'  # Set an initial version if no tags exist
+    current_version = 'v0.0.0'  # Set an initial version if no tags exist
 
 version_type = sys.argv[1]
 new_version = increment_version(current_version, version_type)
@@ -27,6 +27,6 @@ new_version = increment_version(current_version, version_type)
 repo.create_tag(new_version)
 
 # Configure authentication using the token
-origin = repo.remote(name='origin')
-origin.set_url(f'https://{os.getenv("GITHUB_TOKEN")}@github.com/{os.getenv("GITHUB_REPOSITORY")}.git')
+remote_url = f'https://{os.getenv("GITHUB_TOKEN")}@github.com/{os.getenv("GITHUB_REPOSITORY")}.git'
+origin = repo.create_remote('authenticated', url=remote_url)
 origin.push('refs/tags/' + new_version)
