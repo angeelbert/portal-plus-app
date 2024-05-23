@@ -13,7 +13,7 @@ def increment_version(version, version_type):
         parts[2] = '0'
     elif version_type == 'patch':
         parts[2] = str(int(parts[2]) + 1)
-    return 'v' + '.'.join(parts)
+    return 'v' + '.join(parts)
 
 repo = git.Repo('.')
 try:
@@ -27,5 +27,6 @@ new_version = increment_version(current_version, version_type)
 repo.create_tag(new_version)
 
 # Configurar autenticación utilizando el token
-origin = repo.remotes.origin
+origin = repo.remote(name='origin')
+origin.set_url(f'https://{os.getenv("GH_TOKEN")}@github.com/{os.getenv("GITHUB_REPOSITORY")}.git')
 origin.push('refs/tags/' + new_version)
