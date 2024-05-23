@@ -1,0 +1,89 @@
+<header
+  class="navbar navbar-dark sticky-top bg-white flex-md-nowrap p-0 shadow"
+>
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 bg-schwager" href="#">
+    <img src="/assets/img/logo-GNP.png" alt="LOGO_SCHWAGER"/>
+  </a>
+  <button
+    class="navbar-toggler position-absolute d-md-none collapsed text-secondary"
+    type="button"
+    (click)="isCollapsed = !isCollapsed"
+    [attr.aria-expanded]="!isCollapsed"
+    aria-controls="navbarsExampleDefault"
+    aria-label="Toggle navigation"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+  <div class="breadums-navbar">
+    <span class="fw-bold fs-3 breadcums"> <!--{{ breadcums }} --></span>
+  </div>
+  <label class="text-secondary agente">
+    <img src="{{ foto }}" class="avatar img-fluid rounded-circle me-1" alt="" />
+    {{ nombreAgente }}
+  </label>
+  <a class="text-secondary text-start agente-icon" (click)="logout()">
+    <i class="fa-solid fa-right-from-bracket fa-xl px-2"></i>
+  </a>
+</header>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav
+      id="sidebarMenu"
+      class="col-md-3 col-lg-2 d-md-block bg-portalplus sidebar collapse"
+      [ngbCollapse]="isCollapsed"
+    >
+      <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/contratos"
+              [class.active]="isActive('/contratos')"
+            >
+              <span data-feather="users"></span>
+              <i class="fa-solid fa-clipboard-list fa-xl"></i> B&uacute;squeda de Contratos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/obituario"
+              [class.active]="isActive('/obituario')"
+            >
+              <span data-feather="users"></span>
+              <i class="fas fa-leaf fa-xl"></i> Obituario
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/pagos"
+              [class.active]="isActive('/pagos')"
+            >
+              <span data-feather="users"></span>
+              <i class="fa-solid fa-clipboard-list fa-xl"></i> B&uacute;squeda de Pagos
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/user/perfil"
+              [class.active]="isActive('/user/perfil')"
+            >
+              <span data-feather="users"></span>
+              <i class="fa-solid fa-user-pen fa-xl px-2"></i> Cambiar foto
+              perfil
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,100 @@
+/* You can add global styles to this file, and also import other style files */
+.bg-color-body {
+    background-color: #eee !important;
+}
+
+.center-dev {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.copy-right-login {
+    margin-top: -50px;
+}
+
+.bg-portalplus {
+    background-color: #444;
+}
+
+.bg-white {
+    background-color: #fff;
+}
+
+.border-portalplus {
+    border-color: #444;
+}
+
+.text-color-portalplus {
+    color: #444;
+}
+
+.text-white {
+    color: #fff;
+}
+
+.link-login{
+    color: #3498db;
+}
+
+/****************** Sidebar Menu ***********************/
+
+#sidebarMenu a{
+    color: #fff;
+    font-family: 'Calibri', sans-serif;
+    font-weight: 100;
+}
+
+#sidebarMenu li{
+   padding: 10px 10px;
+}
+
+#sidebarMenu li a{
+    padding: 5px 5px;
+}
+
+#sidebarMenu li a i{
+    padding: 0 10px;
+}
+
+.active {
+    background-color: #fff !important;
+    border-radius: 10px;
+    box-shadow: 3px 3px 3px #444;
+    color: #222 !important;
+}
+/****************** Breadcums ***********************/
+
+.breadums-navbar {
+    text-align: left;
+    width: 70%;
+}
+
+/****************** Breadcums ***********************/
+.avatar {
+    margin-top: -15px;
+    margin-bottom: -15px;
+    width: 40px;
+    height: 40px;
+}
+
+.breadcums{
+    margin-left: 50%;
+}
+
+.agente{
+    width: 13%;
+}
+
+@media only screen and (max-width: 600px) {
+    .agente {
+        margin-left: 50px;
+        width: 60%;
+        margin-bottom: 15px;
+    }
+
+    .agente-icon {
+        width: 25%;
+    }
+  }

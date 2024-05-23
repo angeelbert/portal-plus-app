@@ -1,0 +1,37 @@
+/* Estilos personalizados para los botones */
+.btn-custom {
+  background-color: transparent;
+  color: #fff; /* Color del texto */
+  border: 2px solid green; /* Borde verde */
+}
+
+.btn-custom img {
+  margin-right: 5px; /* Espacio entre la imagen y el texto del botón */
+  display: block;
+  margin: auto;
+}
+
+/* Ajustes para los botones dentro de las columnas */
+.btn-column {
+  width: 100%;
+  margin-bottom: 1rem; /* Espacio uniforme entre los botones */
+}
+
+#botonesGrupo .btn {
+  margin-right: 10px; /* Espacio a la derecha */
+  margin-bottom: 10px; /* Espacio hacia abajo */
+}
+
+/* Ajuste para dispositivos pequeños */
+@media (max-width: 575.98px) {
+  #botonesGrupo .btn {
+    margin-right: 0; /* Elimina el espacio a la derecha para dispositivos pequeños */
+    margin-bottom: 10px; /* Espacio hacia abajo */
+    display: block; /* Hace que los botones ocupen todo el ancho disponible */
+  }
+}
+
+.small-place {
+  font-size: 0.8em; /* Cambia el tamaño de la fuente según tus preferencias */
+  color: #898a8e;
+}

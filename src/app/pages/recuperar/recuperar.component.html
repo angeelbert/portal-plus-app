@@ -1,0 +1,39 @@
+<div class="example-container" *ngIf="route.children.length === 0">
+  <div class="row center-dev">
+    <div class="col-sm-3">
+      <div class="card">
+        <form [formGroup]="form" (ngSubmit)="enviar()">
+          <div class="card-header bg-transparen text-center bg-white">
+            <img src="/assets/img/logo-GNP.png" alt="LOGO_SCHWAGER" />
+          </div>
+          <div class="card-body">
+            <div class="form-outline">
+              <input
+                type="email"
+                id="typePassword"
+                class="form-control"
+                placeholder="Ingresa correo electrónico corporativo"
+                formControlName="email"
+              />
+            </div>
+          </div>
+          <div class="card-footer bg-transparent">
+            <div class="d-grid gap-2 col-6 mx-auto">
+              <button
+                class="btn btn-primary"
+                type="submit"
+                mdbRipple
+                (click)="enviar()"
+                [disabled]="!form.valid"
+              >
+                Enviar Correo
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="mensaje">{{ mensaje }}</div>
+  <div *ngIf="error">{{ error }}</div>
+</div>

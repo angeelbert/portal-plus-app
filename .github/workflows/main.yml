@@ -1,0 +1,40 @@
+name: Tag Repository
+
+on:
+  push:
+    branches:
+    #   - main
+    #   - develop
+       - feat/devops
+    
+
+jobs:
+    tag:
+      runs-on: ubuntu-latest
+  
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+  
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+  
+      - name: Install GitPython and requests
+        run: |
+          python -m pip install --upgrade pip
+          pip install gitpython requests
+  
+      - name: Run tag script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ $GITHUB_REF == refs/heads/main ]]; then
+            VERSION_TYPE=minor
+          elif [[ $GITHUB_REF == refs/heads/feat/devops ]]; then
+            VERSION_TYPE=patch
+          else
+            VERSION_TYPE=patch
+          fi
+          python tag_repo.py $VERSION_TYPE

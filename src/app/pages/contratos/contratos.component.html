@@ -1,0 +1,157 @@
+<div
+  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+>
+  <h1 class="h2">Contratos</h1>
+</div>
+
+<div class="row" *ngIf="!showData">
+  <div class="col">
+    <form [formGroup]="form" (ngSubmit)="buscarContratos()">
+      <div class="mb-3 col-sm-6 col-md-3">
+        <label class="form-label">
+          Ingresar R.U.T sin guión y sin digito verificador
+        </label>
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="R.U.T"
+            aria-describedby="button-addon2"
+            formControlName="rut"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            type="submit"
+            id="button-addon2"
+            [disabled]="!form.valid"
+          >
+            Buscar
+          </button>
+        </div>
+      </div>
+      <div
+        *ngIf="form.get('rut').touched && form.get('rut').invalid"
+        class="alert alert-danger"
+      >
+        <div *ngIf="form.get('rut').required">Rut es requerido.</div>
+        <div *ngIf="form.get('rut').errors.pattern">Solo números.</div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="row" *ngIf="showData">
+  <div class="col table-responsive">
+    <p>Lista de contratos</p>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Rut</th>
+          <th scope="col" sortable="barra">Contrato</th>
+          <th scope="col" sortable="descripcion">Descripción</th>
+          <th scope="col" sortable="nombreParque">Nombre parque</th>
+          <th scope="col" sortable="siglaEstado">Sigla estado</th>
+          <th scope="col" sortable="nombre">Nombre</th>
+          <th scope="col" sortable="aPaterno">Apellido Paterno</th>
+          <th scope="col" sortable="fallecidos">Fallecidos</th>
+          <th scope="col" sortable="moracred">Moracred</th>
+          <th scope="col" sortable="moracred">MoraMant</th>
+          <th scope="col" sortable="moraMant">Ver Pagos</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (contrato of contratos; track contrato.rut) {
+        <tr>
+          <th scope="row">{{ contrato.rut }}</th>
+          <td>{{ contrato.barra }}</td>
+          <td>{{ contrato.descripcion }}</td>
+          <td>{{ contrato.nombreParque }}</td>
+          <td>{{ contrato.siglaEstado == 'V' ? 'Vigente': contrato.siglaEstado == 'C' ? 'Cancelado': contrato.siglaEstado == 'A' ? 'Anulado': 'No aplica'}}</td>
+          <td>{{ contrato.nombre }}</td>
+          <td>{{ contrato.aPaterno }}</td>
+          <td>{{ contrato.fallecidos }}</td>
+          <td>{{ contrato.moracred }}</td>
+          <td>{{ contrato.moraMant }}</td>
+          <td>
+            <button
+              class="btn btn-primary"
+              type="submit"
+              mdbRipple
+              (click)="showPayments(content, contrato)"
+            >
+              <i class="fa-solid fa-dollar-sign"></i>
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row" *ngIf="showData">
+  <div class="col">
+    <div class="d-grid gap-2 col-6 mx-auto">
+      <button
+        class="btn btn-primary"
+        type="button"
+        mdbRipple
+        (click)="resetPage()"
+      >
+        Buscar otro contrato
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Historial de pagos</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Folio</th>
+          <th scope="col" sortable="a3">Fecha pago</th>
+          <th scope="col" sortable="a4">Tipo Mov.</th>
+          <th scope="col" sortable="a5">Monto</th>
+          <th scope="col" sortable="a6">Cuotas pagadas</th>
+          <th scope="col" sortable="a8">Contrato</th>
+          <th scope="col" sortable="a11">Valor UF</th>
+          <th scope="col" sortable="a12">R.U.T.</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (pago of pagos; track pago.folio) {
+        <tr>
+          <th scope="row">{{ pago.a1 }}</th>
+          <td>{{ pago.a3 }}</td>
+          <td>{{ pago.a4 }}</td>
+          <td>{{ formatAmount(pago.a5) }}</td>
+          <td>{{ pago.a6 }}</td>
+          <td>{{ pago.a8 }}</td>
+          <td>{{ formatAmountUF(pago.a11) }}</td>
+          <td>{{ pago.a14 }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="modal.close('Save click')"
+    >
+      Cancel
+    </button>
+  </div>
+</ng-template>
+
+<canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>

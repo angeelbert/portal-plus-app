@@ -1,0 +1,52 @@
+<div class="row">
+  <div class="row center-dev" *ngIf="tokenValido">
+    <div class="col-sm-3">
+      <div class="card">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="card-header bg-transparen text-center bg-white">
+            <img src="/assets/img/logo-GNP.png" alt="LOGO_SCHWAGER" />
+          </div>
+          <div class="card-body">
+            <h5 class="card-title text-center">Restablecer contraseña</h5>
+            <div class="form-outline">
+              <input
+                type="password"
+                id="typeText"
+                class="form-control mb-3"
+                placeholder="Nueva contraseña"
+                formControlName="password"
+              />
+            </div>
+            <div class="form-outline">
+              <input
+                type="password"
+                id="typePassword"
+                class="form-control"
+                placeholder="Repetir contraseña"
+                formControlName="confirmPassword"
+              />
+            </div>
+          </div>
+          <div class="card-footer bg-transparent">
+            <div class="d-grid gap-2 col-6 mx-auto">
+              <button class="btn btn-primary" type="submit" mdbRipple>
+                Cambiar contraseña
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="row center-dev" *ngIf="!tokenValido">
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="alert alert-danger" role="alert">
+            La petición no es válida o ha expirado
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

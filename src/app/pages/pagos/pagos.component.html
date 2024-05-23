@@ -1,0 +1,392 @@
+<div
+  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+>
+  <h1 class="h2">Pagos</h1>
+</div>
+
+<div class="row" *ngIf="!showData">
+  <div class="col">
+    <form [formGroup]="form" (ngSubmit)="buscarContratos()">
+      <div class="mb-3 col-sm-6 col-md-3">
+        <label class="form-label">
+          Ingresar R.U.T sin guión y sin digito verificador
+        </label>
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="R.U.T"
+            aria-describedby="button-addon2"
+            formControlName="rut"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            type="submit"
+            id="button-addon2"
+            [disabled]="!form.valid"
+          >
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <div
+        *ngIf="form.get('rut').touched && form.get('rut').invalid"
+        class="alert alert-danger"
+      >
+        <div *ngIf="form.get('rut').required">Rut es requerido.</div>
+        <div *ngIf="form.get('rut').errors.pattern">Solo números.</div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="row" *ngIf="showData">
+  <div class="col table-responsive">
+    <div class="row">
+      <div class="col">
+        <h5>Datos Generales</h5>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <p>
+          Nombre:
+          <span class="badge rounded-pill bg-secondary">
+            {{
+              contratos.length > 0
+                ? contratos[0].nombre + " " + contratos[0].aPaterno
+                : ""
+            }}
+          </span>
+        </p>
+      </div>
+      <div class="col">
+        <p>
+          R.U.T:
+          <span class="badge rounded-pill bg-secondary">
+            {{ contratos.length > 0 ? contratos[0].rut : "" }}
+          </span>
+        </p>
+      </div>
+      <div class="col">
+        <button
+          class="btn btn-primary"
+          type="submit"
+          title="Ver Pagos Pendientes"
+          mdbRipple
+          (click)="showCupones(contentCupones, contratos[0].rut)"
+        >
+          <i class="fa-solid fa-dollar-sign"></i> Consultar Pagos pendientes
+        </button>
+      </div>
+    </div>
+
+    <hr />
+
+    <h5>Lista de contratos</h5>
+
+    <br />
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th class="text-center" scope="col" sortable="barra">Contrato</th>
+          <th class="text-center" scope="col" sortable="moracred">Historial</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (contrato of contratos; track contrato.rut) {
+        <tr>
+          <td class="text-center">{{ contrato.barra }}</td>
+          <td class="text-center">
+            <button
+              class="btn btn-primary"
+              type="submit"
+              title="Ver Historial"
+              mdbRipple
+              (click)="showPayments(contentPagos, contrato)"
+            >
+              <i class="fa-solid fa-dollar-sign"></i> Historial
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row" *ngIf="showData">
+  <div class="col">
+    <div class="d-grid gap-2 col-6 mx-auto">
+      <button
+        class="btn btn-primary"
+        type="button"
+        mdbRipple
+        (click)="resetPage()"
+      >
+        Buscar otro contrato
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #contentCupones let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Pagos pendientes</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col">
+        <h5>Datos Generales</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <p>
+          R.U.T:
+          <span class="badge rounded-pill bg-primary">
+            {{ cuponesPendientes.length > 0 ? cuponesPendientes[0].a5 : "" }}
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+      <div class="col">
+        <h5>Pagos Pendientes</h5>
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th class="text-center" scope="col" sortable="a1">Contrato</th>
+              <th class="text-center" scope="col" sortable="a4">Nro Cupon</th>
+              <th class="text-center" scope="col" sortable="a6">Nro Cuota</th>
+              <th class="text-center" scope="col" sortable="a7">
+                Fecha Vencimiento
+              </th>
+              <th class="text-center" scope="col" sortable="a8">
+                Estado de pago
+              </th>
+              <th class="text-center" scope="col" sortable="a9">
+                Tipo Movimiento
+              </th>
+              <th class="text-center" scope="col" sortable="a10">
+                Monto Cuota
+              </th>
+              <th class="text-center" scope="col" sortable="a12">
+                Tipo Moneda
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cuponPendiente of cuponesPendientes; track cuponPendiente.a1) {
+            <tr>
+              <th class="text-center" scope="row">
+                {{ cuponPendiente.a1 }}{{ cuponPendiente.a2 }}{{ cuponPendiente.a3 }}
+              </th>
+              <td class="text-center">{{ cuponPendiente.a4 }}</td>
+              <td class="text-center">{{ cuponPendiente.a6 }}</td>
+              <td class="text-center">{{ cuponPendiente.a7 }}</td>
+              <td class="text-center">{{ cuponPendiente.a8 }}</td>
+              <td class="text-center">{{ cuponPendiente.a9 }}</td>
+              <td class="text-center">{{ formatAmount(cuponPendiente.a10) }}</td>
+              <td class="text-center">{{ cuponPendiente.a12 }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <h5>Pagos Futuros</h5>
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th class="text-center" scope="col" sortable="a1">Contrato</th>
+              <th class="text-center" scope="col" sortable="a4">Nro Cupon</th>
+              <th class="text-center" scope="col" sortable="a6">Nro Cuota</th>
+              <th class="text-center" scope="col" sortable="a7">
+                Fecha Vencimiento
+              </th>
+              <th class="text-center" scope="col" sortable="a8">
+                Estado de pago
+              </th>
+              <th class="text-center" scope="col" sortable="a9">
+                Tipo Movimiento
+              </th>
+              <th class="text-center" scope="col" sortable="a10">
+                Monto Cuota
+              </th>
+              <th class="text-center" scope="col" sortable="a12">
+                Tipo Moneda
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cuponFuturo of cuponesFuturos; track cuponFuturo.a1) {
+            <tr>
+              <th class="text-center" scope="row">
+                {{ cuponFuturo.a1 }}{{ cuponFuturo.a2 }}{{ cuponFuturo.a3 }}
+              </th>
+              <td class="text-center">{{ cuponFuturo.a4 }}</td>
+              <td class="text-center">{{ cuponFuturo.a6 }}</td>
+              <td class="text-center">{{ cuponFuturo.a7 }}</td>
+              <td class="text-center">{{ cuponFuturo.a8 }}</td>
+              <td class="text-center">{{ cuponFuturo.a9 }}</td>
+              <td class="text-center">{{ formatAmount(cuponFuturo.a10) }}</td>
+              <td class="text-center">{{ cuponFuturo.a12 }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="modal.close('Save click')"
+    >
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #contentPagos let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Historial</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="pagos && pagos.length > 0">
+      <div class="row">
+        <div class="col">
+          <h5>Datos Generales</h5>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <p>
+            Nombre:
+            <span class="badge rounded-pill bg-secondary">
+              {{
+                contratos.length > 0
+                  ? contratos[0].nombre + " " + contratos[0].aPaterno
+                  : ""
+              }}
+            </span>
+          </p>
+        </div>
+
+        <div class="col">
+          <p>
+            R.U.T:
+            <span class="badge rounded-pill bg-secondary">
+              {{ contratos.length > 0 ? contratos[0].rut : "" }}
+            </span>
+          </p>
+        </div>
+
+        <div class="col">
+          <p>
+            Contrato:
+            <span class="badge rounded-pill bg-secondary">
+              {{ pagos.length > 0 ? pagos[0].a8 : "" }}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <hr />
+
+      <h5>Historial de Pagos</h5>
+
+      <br />
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th class="text-center" scope="col">Folio</th>
+            <th class="text-center" scope="col" sortable="a3">Fecha pago</th>
+            <th class="text-center" scope="col" sortable="a4">Tipo Mov.</th>
+            <th class="text-center" scope="col" sortable="a5">Monto</th>
+            <th
+              class="text-center"
+              scope="col"
+              sortable="a6"
+              class="text-center"
+            >
+              Cuotas pagadas
+            </th>
+            <th
+              class="text-center"
+              scope="col"
+              sortable="a9"
+              class="text-center"
+            >
+              Caja
+            </th>
+            <th
+              class="text-center"
+              scope="col"
+              sortable="a10"
+              class="text-center"
+            >
+              Rezago
+            </th>
+            <th class="text-center" scope="col" sortable="a11">Valor UF</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pago of pagos; track pago.a1) {
+          <tr>
+            <th class="text-center" scope="row">{{ pago.a1 }}</th>
+            <td class="text-center">{{ pago.a3 }}</td>
+            <td class="text-center">{{ pago.a4 }}</td>
+            <td class="text-center">{{ formatAmount(pago.a5) }}</td>
+            <td class="text-center">{{ pago.a6 }}</td>
+            <td class="text-center">{{ pago.a9 }}</td>
+            <td class="text-center">{{ pago.a10 }}</td>
+            <td class="text-center">{{ formatAmountUF(pago.a11) }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="!pagos || pagos.length === 0">
+      <div class="col text-center">
+        <p class="h4 mb-4">No se encontraron pagos realizados.</p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="modal.close('Save click')"
+    >
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+<canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>

@@ -1,0 +1,221 @@
+<div
+  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+>
+<h1 class="h2">Obituario <span class="small-place">{{ selectedPlace }}</span></h1>
+</div>
+
+<div *ngIf="showBotoneraParques">
+
+  <div class="row">
+    <div class="col">
+      <button type="button" 
+        class="btn btn-custom btn-column"  
+        title="Cementerio Parque Puente Alto"
+        (click)="buscarData('parque', '1', 'Cementerio Parque Puente Alto')">
+        <img src="/assets/img/Logos_GNP_El prado_iso.jpg" alt="Cementerio Parque Puente Alto">
+      </button>
+    </div>
+
+    <div class="col">
+      <button type="button" 
+        class="btn btn-custom btn-column" 
+        title="Cementerio Parque Pudahuel"
+        (click)="buscarData('parque', '101', 'Cementerio Parque Pudahuel')">
+        <img src="/assets/img/Logos_GNP_canaan_iso.jpg" alt="Cementerio Parque Pudahuel">
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <button type="button" 
+        class="btn btn-custom btn-column" 
+        title="Cementerio Parque Huechuraba"
+        (click)="buscarData('parque', '103', 'Cementerio Parque Huechuraba')">
+        <img src="/assets/img/Logos_GNP_santiago_iso.jpg" alt="Cementerio Parque Huechuraba" title="Cementerio Parque Huechuraba">
+      </button>
+    </div>
+
+    <div class="col">
+      <button type="button" 
+        class="btn btn-custom btn-column" 
+        title="Sector Los Olivos"
+        (click)="buscarData('parque', '103', 'Sector Los Olivos')">
+        <img src="/assets/img/Logos_GNP_santiago_2_iso.jpg" alt="Sector Los Olivos">
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <button type="button" 
+        class="btn btn-custom btn-column" 
+        title="Cementerio Parque Maip&uacute;"
+        (click)="buscarData('parque', '102', 'Cementerio Parque Maip&uacute;')">
+        <img src="/assets/img/Logos_GNP_el manantial_iso.jpg" alt="Cementerio Parque Maip&uacute;">
+      </button>
+    </div>
+
+    <div class="col">
+      <button type="button" 
+        class="btn btn-custom btn-column" 
+        title="Cementerio Parque La Serena"
+        (click)="buscarData('parque', '11', 'Cementerio Parque La Serena')">
+        <img src="/assets/img/Logos_GNP_la_foresta_iso.jpg" alt="Cementerio Parque La Serena">      
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <button type="button" 
+        class="btn btn-custom btn-column" 
+        title="Cinerario del Parque"
+        (click)="buscarData('crematorio', '' ,'Templo Parque El Manantial')">
+        <img src="/assets/img/Logo_GNP_cinerario_redimencionada_editada.jpeg" alt="Cinerario del Parque">
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<div class="row">
+
+  <div class="col" *ngIf="showData">
+    <!--<form [formGroup]="form" (ngSubmit)="buscarContratos()">
+      <div class="mb-3 col-sm-6 col-md-3">
+        <label class="form-label">
+          Ingresar 
+        </label>
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="R.U.T"
+            aria-describedby="button-addon2"
+            formControlName="rut"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            type="submit"
+            id="button-addon2"
+            [disabled]="!form.valid"
+          >
+            Buscar
+          </button>
+        </div>
+      </div>
+      <div
+        *ngIf="form.get('rut').touched && form.get('rut').invalid"
+        class="alert alert-danger"
+      >
+        <div *ngIf="form.get('rut').required">Rut es requerido.</div>
+        <div *ngIf="form.get('rut').errors.pattern">Solo números.</div>
+      </div>
+    </form>-->
+    <div class="row justify-content-end mt-3 mb-5" id="botonesGrupo">
+      <div class="col-auto">
+        <button type="button" 
+          class="btn mb-3" 
+          [class.btn-primary]="!hoySeleccionado" 
+          [class.btn-success]="hoySeleccionado" 
+          title="Hoy" 
+          (click)="buscarByDay('today')">
+          Hoy
+        </button>
+      </div>
+      <div class="col-auto">
+        <button type="button" 
+          class="btn mb-3" 
+          [class.btn-primary]="!mananaSeleccionado" 
+          [class.btn-success]="mananaSeleccionado" 
+          title="Ma&ntilde;ana" 
+          (click)="buscarByDay('tomorrow')">
+          Ma&ntilde;ana
+        </button>
+      </div>
+      <div class="col-auto">
+        <button type="button" 
+          class="btn mb-3" 
+          [class.btn-primary]="!pasadoMananaSeleccionado" 
+          [class.btn-success]="pasadoMananaSeleccionado" 
+          title="Pasado Ma&ntilde;ana" 
+          (click)="buscarByDay('dayAfterTomorrow')">
+          Pasado Ma&ntilde;ana
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="showData && tipoBusqueda==='parque' && obituarios && obituarios.length > 0">
+  <div class="col table-responsive">
+    <table class="table table-striped">
+      <thead class="sticky-top bg-light">
+        <tr>
+          <th scope="col" sortable="a3">Nombre de fallecido</th>
+          <th scope="col" sortable="a2">Hora</th>
+          <th scope="col" sortable="a11">&Aacute;rea</th>
+          <th scope="col" sortable="a10">Sector</th>
+          <th scope="col" sortable="a14">Nro Sepultura</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (obituario of obituarios; track obituario.rut) {
+        <tr>
+          <th>{{ obituario.a3 }} {{ obituario.a4 }}</th>
+          <td>{{ getHourOrMinutes(obituario.a2) }}:{{ getHourOrMinutes(obituario.a5) }}</td>
+          <td>{{ obituario.a11 }}</td>
+          <td>{{ obituario.a10 }}</td>
+          <td>{{ obituario.a14 }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row" *ngIf="showData && tipoBusqueda==='crematorio' && obituarios && obituarios.length > 0">
+  <div class="col table-responsive">
+    <table class="table table-striped">
+      <thead class="sticky-top bg-light">
+        <tr>
+          <th scope="col" sortable="a15">Nombre de fallecido</th>
+          <th scope="col" sortable="a2">Hora</th>         
+          <th scope="col" sortable="a14">Lugar</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (obituario of obituarios; track obituario.rut) {
+        <tr>
+          <th>{{ obituario.a15 }} {{ obituario.a16 }} {{ obituario.a17 }}</th>
+          <td>{{ getHourOrMinutes(obituario.a10) }}:{{ getHourOrMinutes(obituario.a11)}}</td>
+          <td>Templo Parque El Manantial</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row mt-5 mb-5" *ngIf="showData && (!obituarios || obituarios.length === 0)">
+  <div class="col text-center">
+    <p class="h4 mb-4">No hay datos para mostrar.</p>
+  </div>
+</div>
+
+<div class="row mb-5" *ngIf="showData">
+  <div class="col">
+    <div class="d-grid gap-2 col-6 mx-auto">
+      <button
+        class="btn btn-primary"
+        type="button"
+        mdbRipple
+        (click)="resetPage()"
+      >
+        Buscar otro parque
+      </button>
+    </div>
+  </div>
+</div>
+
+<canvas class="my-4 w-100" id="myChart" width="900" height="180"></canvas>

@@ -1,0 +1,53 @@
+<div class="row center-dev">
+  <div class="col-sm-3">
+    <div class="card">
+      <form [formGroup]="form" (ngSubmit)="login()">
+        <div class="card-header bg-transparen text-center bg-white">
+          <img src="/assets/img/logo-GNP.png" alt="LOGO_SCHWAGER" />
+        </div>
+        <div class="card-body">
+          <h5 class="card-title text-center">Bienvenido(a)</h5>
+          <div class="form-outline">
+            <input
+              type="text"
+              id="typeText"
+              class="form-control mb-3"
+              placeholder="Ingrese su R.U.T sin puntos ni digito verificador"
+              formControlName="username"
+            />
+          </div>
+          <div class="form-outline">
+            <input
+              type="password"
+              id="typePassword"
+              class="form-control"
+              placeholder="Ingrese su contraseña"
+              formControlName="password"
+            />
+          </div>
+          <div class="col text-center">
+            <!-- Simple link -->
+            <a class="link-login" routerLink="/recuperar"
+              >Recuperar contraseña</a
+            >
+          </div>
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="d-grid gap-2 col-6 mx-auto">
+            <button
+              class="btn btn-primary"
+              type="submit"
+              mdbRipple
+              [disabled]="!form.valid"
+            >
+              Ingresar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="text-center copy-right-login">
+  <span> GNP 2024 &copy; Todos los derechos reservados </span>
+</div>
