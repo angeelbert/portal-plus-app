@@ -1,10 +1,11 @@
 import sys
+import os
 import git
 
 def increment_version(version, version_type):
     parts = version.split('.')
     if version_type == 'major':
-        parts[0] = str(int(parts[0]) + 1)
+        parts[0] = str(int(parts[0][1:]) + 1)
         parts[1] = '0'
         parts[2] = '0'
     elif version_type == 'minor':
@@ -12,13 +13,19 @@ def increment_version(version, version_type):
         parts[2] = '0'
     elif version_type == 'patch':
         parts[2] = str(int(parts[2]) + 1)
-    return '.'.join(parts)
+    return 'v' + '.'.join(parts)
 
 repo = git.Repo('.')
-current_version = repo.git.describe(tags=True, abbrev=0)
-version_type = sys.argv[1]
+try:
+    current_version = repo.git.describe(tags=True, abbrev=0)
+except git.exc.GitCommandError:
+    current_version = 'v0.1.0'  # Establecer una versión inicial si no hay tags previos
 
+version_type = sys.argv[1]
 new_version = increment_version(current_version, version_type)
 
 repo.create_tag(new_version)
-repo.remotes.origin.push('refs/tags/' + new_version)
+
+# Configurar autenticación utilizando el token
+origin = repo.remotes.origin
+origin.push('refs/tags/' + new_version)
