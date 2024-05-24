@@ -53,3 +53,35 @@ jobs:
         tag: ${{ steps.tag_version.outputs.new_tag }}
         name: Release ${{ steps.tag_version.outputs.new_tag }}
         body: ${{ steps.tag_version.outputs.changelog }} 
+    - name: Tag and Release in other repositories
+      run: |
+        while IFS= read -r repo_url; do
+          echo "Tagging and releasing in $repo_url"
+          repo_name=$(basename -s .git "$repo_url")
+          git clone "$repo_url"
+          cd "$repo_name"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.tag_version.outputs.new_tag }}
+          git push "$repo_url" --tags
+          release_response=$(curl -X POST \
+            -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ repo_url#https://github.com/ }}/releases \
+            -d '{
+              "tag_name": "'${{ steps.tag_version.outputs.new_tag }}'",
+              "target_commitish": "main",
+              "name": "Release '${{ steps.tag_version.outputs.new_tag }}'",
+              "body": "'${{ steps.tag_version.outputs.changelog }}'",
+              "draft": false,
+              "prerelease": false
+            }')
+          if echo "$release_response" | grep -q 'created_at'; then
+            echo "Release created successfully for $repo_url"
+          else
+            echo "Failed to create release for $repo_url: $release_response"
+          fi
+          cd ..
+        done < repos.txt
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
