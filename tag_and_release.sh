@@ -7,7 +7,7 @@ while IFS= read -r repo_url; do
   repo_name=$(basename -s .git "$repo_url")
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url}"
   git clone "$authenticated_repo_url"
-  cd "$repo_name"
+  cd "$repo_name" || exit
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
   git tag "$1"
@@ -22,7 +22,7 @@ while IFS= read -r repo_url; do
   "tag_name": "$1",
   "target_commitish": "main",
   "name": "Release $1",
-  "body": "### [$1](https://github.com/${{ github.repository }}/compare/v${{ steps.tag_version.outputs.previous_tag }}...v$1) (2024-05-24)",
+  "body": "### [$1](https://github.com/${repo_url}/compare/v${1}...v${1}) (2024-05-24)",
   "draft": false,
   "prerelease": false
 }
