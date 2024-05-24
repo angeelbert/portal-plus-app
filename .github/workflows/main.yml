@@ -28,6 +28,8 @@ jobs:
         token: ${{ secrets.GH_TOKEN }}
 
     - name: Tag and Release in other repositories
-      run: ./tag_and_release.sh ${{ steps.tag_version.outputs.new_tag }}
+      run: |
+        chmod +x tag_and_release.sh
+        ./tag_and_release.sh ${{ steps.tag_version.outputs.new_tag }}
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
