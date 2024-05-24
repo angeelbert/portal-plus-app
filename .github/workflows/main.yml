@@ -1,4 +1,4 @@
-name: Tag and Release
+name: Tag and Release Multiple Repositories
 
 on:
   push:
@@ -10,49 +10,23 @@ jobs:
   tag:
     runs-on: ubuntu-latest
     steps:
-    # - name: Checkout code
-    #   uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-    # - name: Set up Python
-    #   uses: actions/setup-python@v5
-    #   with:
-    #     python-version: '3.10'
-
-    # - name: Install dependencies
-    #   run: |
-    #     python -m pip install --upgrade pip
-    #     pip install gitpython
-
-    # - name: Determine version type
-    #   id: get-version-type
-    #   run: |
-    #     if [[ $GITHUB_REF == refs/heads/main ]]; then
-    #       echo "::set-output name=version_type::minor"
-    #     elif [[ $GITHUB_REF == refs/heads/feat/devops ]]; then
-    #       echo "::set-output name=version_type::patch"
-    #     else
-    #       echo "::set-output name=version_type::patch"
-    #     fi
-
-    # - name: Tag the repo
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-    #     GITHUB_REPOSITORY: ${{ github.repository }}
-    #   run: |
-    #     python tag_repo.py ${{ steps.get-version-type.outputs.version_type }}
-
-    - uses: actions/checkout@v4
     - name: Bump version and push tag
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.2
       with:
         github_token: ${{ secrets.GH_TOKEN }}
-    - name: Create a GitHub release
+
+    - name: Create a GitHub release in current repo
       uses: ncipollo/release-action@v1
       with:
         tag: ${{ steps.tag_version.outputs.new_tag }}
         name: Release ${{ steps.tag_version.outputs.new_tag }}
-        body: ${{ steps.tag_version.outputs.changelog }} 
+        body: ${{ steps.tag_version.outputs.changelog }}
+        token: ${{ secrets.GH_TOKEN }}
+
     - name: Tag and Release in other repositories
       run: |
         while IFS= read -r repo_url; do
@@ -64,10 +38,11 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag ${{ steps.tag_version.outputs.new_tag }}
           git push "$repo_url" --tags
+          repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
           release_response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ repo_url#https://github.com/ }}/releases \
+            "$repo_api_url" \
             -d '{
               "tag_name": "'${{ steps.tag_version.outputs.new_tag }}'",
               "target_commitish": "main",
