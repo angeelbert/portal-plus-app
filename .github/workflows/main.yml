@@ -45,10 +45,10 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             "$repo_api_url" \
             -d '{
-              "tag_name": "'${{ steps.tag_version.outputs.new_tag }}'",
+              "tag_name": "'"${{ steps.tag_version.outputs.new_tag }}"'",
               "target_commitish": "main",
-              "name": "Release '${{ steps.tag_version.outputs.new_tag }}'",
-              "body": "'${{ steps.tag_version.outputs.changelog }}'",
+              "name": "Release '"${{ steps.tag_version.outputs.new_tag }}"'",
+              "body": "### [${{ steps.tag_version.outputs.new_tag }}](https://github.com/${{ github.repository }}/compare/v${{ steps.tag_version.outputs.previous_tag }}...v${{ steps.tag_version.outputs.new_tag }}) (2024-05-24)",
               "draft": false,
               "prerelease": false
             }')
