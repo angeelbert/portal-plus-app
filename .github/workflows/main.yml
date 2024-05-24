@@ -32,12 +32,13 @@ jobs:
         while IFS= read -r repo_url; do
           echo "Tagging and releasing in $repo_url"
           repo_name=$(basename -s .git "$repo_url")
-          git clone "$repo_url"
+          authenticated_repo_url="https://${{ secrets.GH_TOKEN }}@${repo_url#https://}"
+          git clone "$authenticated_repo_url"
           cd "$repo_name"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag ${{ steps.tag_version.outputs.new_tag }}
-          git push "$repo_url" --tags
+          git push "$authenticated_repo_url" --tags
           repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
           release_response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
