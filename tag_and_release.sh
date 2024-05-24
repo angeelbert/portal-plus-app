@@ -5,16 +5,16 @@
 while IFS= read -r repo_url; do
   echo "Tagging and releasing in $repo_url"
   repo_name=$(basename -s .git "$repo_url")
-  authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
+  authenticated_repo_url="https://${GH_TOKEN}@${repo_url}"
   git clone "$authenticated_repo_url"
   cd "$repo_name"
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
   git tag "$1"
   git push "$authenticated_repo_url" --tags
-  repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
+  repo_api_url="https://api.github.com/repos/${repo_url}/releases"
   release_response=$(curl -X POST \
-    -H "Authorization: token $GH_TOKEN" \
+    -H "Authorization: token ${GH_TOKEN}" \
     -H "Accept: application/vnd.github.v3+json" \
     "$repo_api_url" \
     -d @- <<EOF
