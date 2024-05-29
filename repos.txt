@@ -1,2 +1,1 @@
-https://github.com/angeelbert/lesson-086.git
-https://github.com/angeelbert/aws-sre.git
+https://github.com/angeelbert/portal-plus-app.git
