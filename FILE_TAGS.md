@@ -78,3 +78,6 @@ Tags: v0.0.43
 File: FILE_TAGS.md
 Tags: v0.0.44
 
+File: FILE_TAGS.md
+Tags: v0.0.45
+
