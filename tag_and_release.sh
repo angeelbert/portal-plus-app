@@ -67,7 +67,7 @@ if [ -f "files.txt" ]; then
     tag_name="${file_name%.*}"
 
     # Verificar si ya estamos en un repositorio antes de intentar etiquetar el archivo
-    if [ -d ".git" ]; then
+    if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
       git tag "$tag_name" --force || { echo "Failed to tag file $file_path with tag $tag_name"; continue; }
       git push origin "$tag_name" || { echo "Failed to push tag $tag_name for file $file_path"; continue; }
       echo "Tagged file $file_path with tag $tag_name"
