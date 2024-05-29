@@ -51,3 +51,6 @@ Tags: v0.0.34
 File: FILE_TAGS.md
 Tags: v0.0.35
 
+File: FILE_TAGS.md
+Tags: v0.0.36
+
