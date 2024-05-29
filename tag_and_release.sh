@@ -11,7 +11,6 @@ tag_and_release_repo() {
   repo_name=$(basename "$(echo "$repo_url" | sed 's/\.git$//')" | tr -d '\r')
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
 
-  # Verificar si la etiqueta ya existe en el repositorio
   if git ls-remote --tags "$repo_url" | grep -q "refs/tags/$tag_name"; then
     echo "Tag $tag_name already exists in $repo_url. Skipping tagging."
   else
@@ -47,7 +46,11 @@ EOF
   if echo "$release_response" | grep -q 'created_at'; then
     echo "Release created successfully for $repo_url"
   else
-    echo "Failed to create release for $repo_url: $release_response"
+    if echo "$release_response" | grep -q 'already_exists'; then
+      echo "Release for tag $tag_name already exists. Skipping release creation."
+    else
+      echo "Failed to create release for $repo_url: $release_response"
+    fi
   fi
 }
 
@@ -60,11 +63,18 @@ done < repos.txt
 if [ -f "files.txt" ]; then
   while IFS= read -r file_path; do
     echo "Tagging file: $file_path"
-    tag_name=$(basename "$file_path" | tr -d '\r')
-    git tag "$tag_name" --force # Etiquetar el archivo
-    git push "$authenticated_repo_url" --tags # Empujar la etiqueta al repositorio remoto
-    echo "Tagged file $file_path with tag $tag_name"
+    file_name=$(basename "$file_path" | tr -d '\r')
+    tag_name="${file_name%.*}"
+
+    # Verificar si ya estamos en un repositorio antes de intentar etiquetar el archivo
+    if [ -d ".git" ]; then
+      git tag "$tag_name" --force || { echo "Failed to tag file $file_path with tag $tag_name"; continue; }
+      git push origin "$tag_name" || { echo "Failed to push tag $tag_name for file $file_path"; continue; }
+      echo "Tagged file $file_path with tag $tag_name"
+    else
+      echo "Not inside a git repository. Skipping file tagging."
+    fi
   done < files.txt
 else
-  echo "No files.txt found. Skipping tagging files."
+  echo "No files.txt found. Skipping file tagging."
 fi
