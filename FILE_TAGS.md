@@ -81,3 +81,6 @@ Tags: v0.0.44
 File: FILE_TAGS.md
 Tags: v0.0.45
 
+File: nginx/default.conf
+Tags: v0.0.47
+
