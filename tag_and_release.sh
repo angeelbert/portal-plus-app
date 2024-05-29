@@ -53,7 +53,7 @@ EOF
 
 # Etiquetar y lanzar repositorios
 while IFS= read -r repo_url; do
-  tag_and_release_repo "$repo_url" "$1"
+  tag_and_release_repo "$(echo "$repo_url" | tr -d '\r')" "$1"
 done < repos.txt
 
 # Etiquetar archivos en las rutas proporcionadas
