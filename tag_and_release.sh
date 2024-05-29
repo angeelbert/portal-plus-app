@@ -8,7 +8,7 @@ tag_and_release_repo() {
   tag_name="$2"
 
   echo "Tagging and releasing in $repo_url"
-  repo_name=$(basename -s .git "$repo_url" | tr -d '\r')  # Elimina el retorno de carro (\r) si está presente en el nombre del repositorio
+  repo_name=$(basename "$repo_url" .git | tr -d '\r')  # Elimina el retorno de carro (\r) si está presente en el nombre del repositorio
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
   git clone "$authenticated_repo_url" || { echo "Failed to clone repository: $repo_url"; exit 1; }
   cd "$repo_name" || { echo "Failed to change directory to repository: $repo_name"; exit 1; }
@@ -36,7 +36,7 @@ EOF
     echo "Release created successfully for $repo_url"
   else
     echo "Failed to create release for $repo_url: $release_response"
-  fi 
+  fi
   cd ..
 }
 
