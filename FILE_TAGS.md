@@ -3,3 +3,6 @@ Etiquetas: v1.0, lanzamiento_inicial, crítico
 
 Archivo: tag_files.sh
 Etiquetas: v1.0, documentación, lanzamiento_inicial
+File: FILE_TAGS.md
+Tags: v0.0.20
+
