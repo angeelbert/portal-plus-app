@@ -38,7 +38,7 @@ while IFS= read -r repo_url; do
     else
       echo "Warning: $file does not exist in $repo_name"
     fi
-  done < ../files.txt
+  done < files.txt
 
   # Commit and push changes
   git add FILE_TAGS.md
