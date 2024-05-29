@@ -1,2 +1,2 @@
 FILE_TAGS.md
-tag_files.sh
+repos.txt
