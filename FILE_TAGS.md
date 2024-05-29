@@ -93,3 +93,6 @@ Tags: v0.0.49
 File: nginx/default.conf
 Tags: v0.0.50
 
+File: nginx/default.conf
+Tags: v0.0.51
+
