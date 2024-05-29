@@ -84,3 +84,6 @@ Tags: v0.0.45
 File: nginx/default.conf
 Tags: v0.0.47
 
+File: nginx/default.conf
+Tags: v0.0.48
+
