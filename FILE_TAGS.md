@@ -1,4 +1,4 @@
-Archivo: FILE_TAGS.md
+nginx/default.conf
 Etiquetas: v1.0, lanzamiento_inicial, crítico
 
 Archivo: tag_files.sh
