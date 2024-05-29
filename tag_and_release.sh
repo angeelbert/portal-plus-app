@@ -36,7 +36,7 @@ EOF
     echo "Release created successfully for $repo_url"
   else
     echo "Failed to create release for $repo_url: $release_response"
-  fi
+  fi 
   cd ..
 }
 
