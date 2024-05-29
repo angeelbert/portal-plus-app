@@ -10,7 +10,8 @@ tag_and_release_repo() {
   echo "Tagging and releasing in $repo_url"
   repo_name=$(basename "$(echo "$repo_url" | sed 's/\.git$//')" | tr -d '\r')
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
-  
+
+  # Verificar si la etiqueta ya existe en el repositorio
   if git ls-remote --tags "$repo_url" | grep -q "refs/tags/$tag_name"; then
     echo "Tag $tag_name already exists in $repo_url. Skipping tagging."
   else
@@ -57,7 +58,6 @@ done < repos.txt
 
 # Etiquetar archivos en las rutas proporcionadas
 if [ -f "files.txt" ]; then
-  authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
   while IFS= read -r file_path; do
     echo "Tagging file: $file_path"
     tag_name=$(basename "$file_path" | tr -d '\r')
