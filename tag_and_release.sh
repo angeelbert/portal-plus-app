@@ -17,7 +17,7 @@ while IFS= read -r repo_url; do
   git clone "$authenticated_repo_url"
   cd "$repo_name"
   
-  if [[ ! -f files.txt ]]; then
+  if [[ ! -f ../files.txt ]]; then
     echo "Error: files.txt not found in the script directory."
     cd ..
     rm -rf "$repo_name"
@@ -35,11 +35,11 @@ while IFS= read -r repo_url; do
   while IFS= read -r file; do
     if [[ -f $file ]]; then
       tag_file "$file" "$1"
-      git add ./$file
+    #   git add ./$file
     else
       echo "Warning: $file does not exist in $repo_name"
     fi
-  done < files.txt
+  done < ../files.txt
 
   # Commit and push changes
   git add FILE_TAGS.md
