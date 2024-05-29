@@ -35,6 +35,7 @@ while IFS= read -r repo_url; do
   while IFS= read -r file; do
     if [[ -f $file ]]; then
       tag_file "$file" "$1"
+      git add $file
     else
       echo "Warning: $file does not exist in $repo_name"
     fi
