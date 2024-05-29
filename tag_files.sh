@@ -1,17 +1,25 @@
 #!/bin/bash
 
-# Archivo que contiene las etiquetas
-ARCHIVO_ETIQUETAS="FILE_TAGS.md"
+# Arguments
+file=$1
+tag=$2
 
-# Función para etiquetar un archivo
-etiquetar_archivo() {
-  local ruta_archivo=$1
-  local etiqueta=$2
-  echo "Archivo: $ruta_archivo" >> $ARCHIVO_ETIQUETAS
-  echo "Etiquetas: $etiqueta" >> $ARCHIVO_ETIQUETAS
-  echo "" >> $ARCHIVO_ETIQUETAS
+# Define the tag file
+TAG_FILE="FILE_TAGS.md"
+
+# Function to tag a file
+tag_file() {
+  local file=$1
+  local tag=$2
+  echo "File: $file" >> $TAG_FILE
+  echo "Tags: $tag" >> $TAG_FILE
+  echo "" >> $TAG_FILE
 }
 
-# Ejemplo de uso
-etiquetar_archivo "FILE_TAGS.md" "v1.0, lanzamiento_inicial, crítico"
-etiquetar_archivo "tag_files.sh" "v1.0, documentación, lanzamiento_inicial"
+# Tag the specified file
+tag_file "$file" "$tag"
+
+# Commit changes
+git add $TAG_FILE
+git commit -m "Tagging $file with $tag"
+git push origin main
