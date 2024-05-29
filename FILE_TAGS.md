@@ -60,3 +60,6 @@ Tags: v0.0.37
 File: FILE_TAGS.md
 Tags: v0.0.38
 
+File: FILE_TAGS.md
+Tags: v0.0.39
+
