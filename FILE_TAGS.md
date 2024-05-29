@@ -102,3 +102,6 @@ Tags: v0.0.52
 File: nginx/default.conf
 Tags: v0.0.53
 
+File: nginx/default.conf
+Tags: v0.0.54
+
