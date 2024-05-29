@@ -1,2 +1,2 @@
-FILE_TAGS.md
+nginx/default.conf
 repos.txt
