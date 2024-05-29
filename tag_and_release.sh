@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# tag_and_release.sh
-
 # Function to tag a specific file
 tag_file() {
   local file=$1
@@ -19,6 +17,13 @@ while IFS= read -r repo_url; do
   git clone "$authenticated_repo_url"
   cd "$repo_name"
   
+  if [[ ! -f ../files.txt ]]; then
+    echo "Error: files.txt not found in the script directory."
+    cd ..
+    rm -rf "$repo_name"
+    continue
+  fi
+  
   # Ensure the tag file exists
   touch FILE_TAGS.md
 
@@ -28,8 +33,12 @@ while IFS= read -r repo_url; do
   
   # Iterate over files to tag
   while IFS= read -r file; do
-    tag_file "$file" "$1"
-  done < files.txt
+    if [[ -f $file ]]; then
+      tag_file "$file" "$1"
+    else
+      echo "Warning: $file does not exist in $repo_name"
+    fi
+  done < ../files.txt
 
   # Commit and push changes
   git add FILE_TAGS.md
@@ -38,6 +47,7 @@ while IFS= read -r repo_url; do
 
   # Create a release
   repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
+  echo "Creating release at URL: $repo_api_url"
   release_response=$(curl -X POST \
     -H "Authorization: token $GH_TOKEN" \
     -H "Accept: application/vnd.github.v3+json" \
@@ -59,4 +69,5 @@ EOF
     echo "Failed to create release for $repo_url: $release_response"
   fi
   cd ..
+  rm -rf "$repo_name"
 done < repos.txt
