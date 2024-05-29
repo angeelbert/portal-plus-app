@@ -17,7 +17,7 @@ while IFS= read -r repo_url; do
   git clone "$authenticated_repo_url"
   cd "$repo_name"
   
-  if [[ ! -f ../files.txt ]]; then
+  if [[ ! -f files.txt ]]; then
     echo "Error: files.txt not found in the script directory."
     cd ..
     rm -rf "$repo_name"
