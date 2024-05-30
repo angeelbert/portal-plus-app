@@ -16,9 +16,9 @@ while IFS= read -r repo_url; do
   tag_version="$1"
   if git rev-parse "$tag_version" >/dev/null 2>&1; then
     echo "Tag $tag_version already exists for repository $repo_url. Incrementing tag version."
-    tag_version="v$(echo "$tag_version" | sed 's/[^0-9]*\([0-9.]*\).*/\1/')"
+    tag_version=$(echo "$tag_version" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')
     while git rev-parse "$tag_version" >/dev/null 2>&1; do
-      tag_version="v$(echo "$tag_version" | sed 's/\([0-9]*\)$/echo \1 + 1 | bc/e')"
+      tag_version=$(echo "$tag_version" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')
     done
   fi
   git tag "$tag_version"
@@ -35,7 +35,7 @@ while IFS= read -r repo_url; do
   "tag_name": "$tag_version",
   "target_commitish": "main",
   "name": "Release $tag_version",
-  "body": "### [$tag_version](https://github.com/${{ github.repository }}/compare/v${{ steps.tag_version.outputs.previous_tag }}...$tag_version) (2024-05-24)",
+  "body": "### [$tag_version](https://github.com/${repo_url}/compare/v${tag_version}...$tag_version) (2024-05-24)",
   "draft": false,
   "prerelease": false
 }
