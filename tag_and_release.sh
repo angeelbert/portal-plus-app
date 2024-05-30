@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# tag_and_release.sh
-
+# Función para incrementar la versión del tag
 increment_tag_version() {
   tag=$1
   if [[ $tag =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -15,7 +14,7 @@ increment_tag_version() {
   fi
 }
 
-# Función para etiquetar y lanzar un solo repositorio
+# Etiquetar y lanzar repositorios
 tag_and_release_repo() {
   repo_url="$1"
   tag_name="$2"
@@ -24,23 +23,29 @@ tag_and_release_repo() {
   repo_name=$(basename "$(echo "$repo_url" | sed 's/\.git$//')" | tr -d '\r')
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
 
+  # Incrementar el tag si ya existe
   while git ls-remote --tags "$repo_url" | grep -q "refs/tags/$tag_name"; do
     echo "Tag $tag_name already exists in $repo_url. Incrementing tag version."
     tag_name=$(increment_tag_version "$tag_name")
   done
 
+  # Clonar el repositorio
   if [ -d "$repo_name" ]; then
     echo "Repository directory already exists. Skipping cloning."
   else
     git clone "$authenticated_repo_url" "$repo_name" || { echo "Failed to clone repository: $repo_url"; exit 1; }
   fi
+
   cd "$repo_name" || { echo "Failed to change directory to repository: $repo_name"; exit 1; }
+
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
+
+  # Etiquetar y empujar los tags
   git tag "$tag_name"
   git push "$authenticated_repo_url" --tags || { echo "Failed to push tags to repository: $repo_url"; exit 1; }
-  cd ..
 
+  # Crear el lanzamiento
   repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
   release_response=$(curl -X POST \
     -H "Authorization: token $GH_TOKEN" \
@@ -51,12 +56,13 @@ tag_and_release_repo() {
   "tag_name": "$tag_name",
   "target_commitish": "main",
   "name": "Release $tag_name",
-  "body": "### [$tag_name]($repo_url/compare/v${tag_name}...v$tag_name) (2024-05-24)",
+  "body": "### [$tag_name](https://github.com/${repo_url}/compare/v${tag_name}...v$tag_name) (2024-05-24)",
   "draft": false,
   "prerelease": false
 }
 EOF
   )
+
   if echo "$release_response" | grep -q 'created_at'; then
     echo "Release created successfully for $repo_url"
   else
@@ -80,32 +86,22 @@ if [ -f "files.txt" ]; then
     file_name=$(basename "$file_path" | tr -d '\r')
     tag_name="${file_name%.*}"
 
-    # Verificar si la etiqueta ya existe y, si es así, incrementarla y romper el bucle después de encontrar una versión disponible
-    original_tag_name="$tag_name"
-    while git ls-remote --tags origin | grep -q "refs/tags/$tag_name"; do
+    # Incrementar el tag si ya existe
+    while git tag | grep -q "^$tag_name$"; do
       echo "Tag $tag_name already exists for file $file_path. Incrementing tag version."
       tag_name=$(increment_tag_version "$tag_name")
     done
 
-    if [[ "$tag_name" != "$original_tag_name" ]]; then
-      echo "Using incremented tag $tag_name for file $file_path."
-    fi
+    # Etiquetar el archivo
+    git tag "$tag_name" "$file_path"
+    git push origin "$tag_name" || { echo "Failed to push tag $tag_name for file $file_path"; continue; }
+    echo "Tagged file $file_path with tag $tag_name"
 
-    # Verificar si ya estamos en un repositorio antes de intentar etiquetar el archivo
-    if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-      git tag "$tag_name" --force || { echo "Failed to tag file $file_path with tag $tag_name"; continue; }
-      git push origin "$tag_name" || { echo "Failed to push tag $tag_name for file $file_path"; continue; }
-      echo "Tagged file $file_path with tag $tag_name"
-
-      # Realizar el commit con el mensaje incluyendo la versión del tag
-      git add "$file_path"
-      git commit -m "Tagging file $file_path with version $tag_name"
-      git push origin main || { echo "Failed to push commit for file $file_path"; continue; }
-      echo "Committed and pushed changes for file $file_path with tag $tag_name"
-    else
-      echo "Not inside a git repository. Skipping file tagging."
-    fi
-    break # Detener el bucle después de etiquetar un archivo con éxito
+    # Hacer commit con el mensaje que incluye la versión del tag
+    git add "$file_path"
+    git commit -m "Tagging file $file_path with version $tag_name"
+    git push origin main || { echo "Failed to push commit for file $file_path"; continue; }
+    echo "Committed and pushed changes for file $file_path with tag $tag_name"
   done < files.txt
 else
   echo "No files.txt found. Skipping file tagging."
