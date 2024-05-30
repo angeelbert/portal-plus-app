@@ -25,7 +25,7 @@ tag_and_commit_file() {
   # Incrementar el tag si ya existe
   while git tag | grep -q "^$tag_name$"; do
     echo "Tag $tag_name already exists for file $file_path. Incrementing tag version."
-    tag_name="${tag_name}_new" # Modificar el tag con un sufijo _new
+    tag_name=$(echo "$tag_name" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')
   done
 
   # Agregar el tag al archivo y hacer el commit
@@ -48,7 +48,7 @@ while IFS= read -r repo_url; do
   cd "$repo_name" || { echo "Failed to change directory to repository: $repo_name"; exit 1; }
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
-  git tag "$1"
+  git tag "$1" || { echo "Tag $1 already exists for repository $repo_url. Incrementing tag version."; }
   git push "$authenticated_repo_url" --tags || { echo "Failed to push tags to repository: $authenticated_repo_url"; exit 1; }
   repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
   release_response=$(curl -X POST \
