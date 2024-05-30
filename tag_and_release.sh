@@ -48,7 +48,12 @@ while IFS= read -r repo_url; do
   cd "$repo_name" || { echo "Failed to change directory to repository: $repo_name"; exit 1; }
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
-  git tag "$1" || { echo "Tag $1 already exists for repository $repo_url. Incrementing tag version."; }
+  # Incrementar el tag si ya existe
+  while git tag | grep -q "^$1$"; do
+    echo "Tag $1 already exists for repository $repo_url. Incrementing tag version."
+    set -- "$(echo "$1" | awk -F '.' '{$NF = $NF + 1;} 1' OFS='.')"
+  done
+  git tag "$1" || { echo "Failed to tag $1 for repository $repo_url"; exit 1; }
   git push "$authenticated_repo_url" --tags || { echo "Failed to push tags to repository: $authenticated_repo_url"; exit 1; }
   repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
   release_response=$(curl -X POST \
