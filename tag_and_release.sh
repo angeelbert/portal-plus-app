@@ -37,7 +37,7 @@ tag_files() {
 
 while IFS= read -r repo_url; do
   echo "Tagging and releasing in $repo_url"
-  repo_name=$(basename -s .git "$repo_url")
+  repo_name=$(basename -s .git "$repo_url" | tr -d '\r') # Remove any trailing carriage return
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
   git clone "$authenticated_repo_url"
   cd "$repo_name"
