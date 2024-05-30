@@ -7,7 +7,7 @@ while IFS= read -r repo_url; do
   repo_name=$(basename -s .git "$repo_url")
   repo_name_clean=$(echo "$repo_name" | tr -d '\r')  # Eliminar cualquier carácter de retorno de carro
   authenticated_repo_url="https://${GH_TOKEN}@github.com/${repo_name_clean}"
-  git clone "$authenticated_repo_url"
+  git clone "$authenticated_repo_url" || { echo "Failed to clone repository: $repo_url"; exit 1; }
   cd "$repo_name_clean" || { echo "Failed to change directory to repository: $repo_name_clean"; exit 1; }
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -22,7 +22,7 @@ while IFS= read -r repo_url; do
     done
   fi
   git tag "$tag_version"
-  git push "$authenticated_repo_url" --tags
+  git push "$authenticated_repo_url" --tags || { echo "Failed to push tags to repository: $authenticated_repo_url"; exit 1; }
   
   # Creating a release
   repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
