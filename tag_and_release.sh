@@ -44,6 +44,7 @@ while IFS= read -r repo_url; do
   repo_name=$(basename -s .git "$repo_url")
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
   git clone "$authenticated_repo_url" || { echo "Failed to clone repository: $repo_url"; exit 1; }
+  repo_name=$(echo "$repo_name" | tr -d '\r') # Eliminar el retorno de carro
   cd "$repo_name" || { echo "Failed to change directory to repository: $repo_name"; exit 1; }
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
