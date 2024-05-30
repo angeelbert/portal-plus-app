@@ -14,7 +14,6 @@ tag_and_commit_file() {
 
   # Clonar el repositorio si no está clonado
   if [ ! -d "$file_name" ]; then
-    authenticated_repo_url="https://${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
     git clone "$authenticated_repo_url" "$file_name" || { echo "Failed to clone repository: $authenticated_repo_url"; exit 1; }
   fi
 
@@ -44,12 +43,12 @@ while IFS= read -r repo_url; do
   echo "Tagging and releasing in $repo_url"
   repo_name=$(basename -s .git "$repo_url")
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
-  git clone "$authenticated_repo_url"
-  cd "$repo_name"
+  git clone "$authenticated_repo_url" || { echo "Failed to clone repository: $repo_url"; exit 1; }
+  cd "$repo_name" || { echo "Failed to change directory to repository: $repo_name"; exit 1; }
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
   git tag "$1"
-  git push "$authenticated_repo_url" --tags
+  git push "$authenticated_repo_url" --tags || { echo "Failed to push tags to repository: $authenticated_repo_url"; exit 1; }
   repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
   release_response=$(curl -X POST \
     -H "Authorization: token $GH_TOKEN" \
@@ -60,7 +59,7 @@ while IFS= read -r repo_url; do
   "tag_name": "$1",
   "target_commitish": "main",
   "name": "Release $1",
-  "body": "### [$1](https://github.com/${GITHUB_REPOSITORY}/compare/v${1}...v$1) (2024-05-24)",
+  "body": "### [$1]($authenticated_repo_url/compare/v${1}...v$1) (2024-05-24)",
   "draft": false,
   "prerelease": false
 }
