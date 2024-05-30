@@ -2,6 +2,19 @@
 
 # tag_and_release.sh
 
+increment_tag_version() {
+  tag=$1
+  if [[ $tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    base=${tag%.*} # v0.0
+    patch=${tag##*.} # 72
+    new_patch=$((patch + 1))
+    new_tag="${base}.${new_patch}" # v0.0.73
+    echo "$new_tag"
+  else
+    echo "$tag"
+  fi
+}
+
 # Función para etiquetar y lanzar un solo repositorio
 tag_and_release_repo() {
   repo_url="$1"
@@ -11,21 +24,22 @@ tag_and_release_repo() {
   repo_name=$(basename "$(echo "$repo_url" | sed 's/\.git$//')" | tr -d '\r')
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
 
-  if git ls-remote --tags "$repo_url" | grep -q "refs/tags/$tag_name"; then
-    echo "Tag $tag_name already exists in $repo_url. Skipping tagging."
+  while git ls-remote --tags "$repo_url" | grep -q "refs/tags/$tag_name"; do
+    echo "Tag $tag_name already exists in $repo_url. Incrementing tag version."
+    tag_name=$(increment_tag_version "$tag_name")
+  done
+
+  if [ -d "$repo_name" ]; then
+    echo "Repository directory already exists. Skipping cloning."
   else
-    if [ -d "$repo_name" ]; then
-      echo "Repository directory already exists. Skipping cloning."
-    else
-      git clone "$authenticated_repo_url" "$repo_name" || { echo "Failed to clone repository: $repo_url"; exit 1; }
-    fi
-    cd "$repo_name" || { echo "Failed to change directory to repository: $repo_name"; exit 1; }
-    git config user.name "github-actions[bot]"
-    git config user.email "github-actions[bot]@users.noreply.github.com"
-    git tag "$tag_name"
-    git push "$authenticated_repo_url" --tags || { echo "Failed to push tags to repository: $repo_url"; exit 1; }
-    cd ..
+    git clone "$authenticated_repo_url" "$repo_name" || { echo "Failed to clone repository: $repo_url"; exit 1; }
   fi
+  cd "$repo_name" || { echo "Failed to change directory to repository: $repo_name"; exit 1; }
+  git config user.name "github-actions[bot]"
+  git config user.email "github-actions[bot]@users.noreply.github.com"
+  git tag "$tag_name"
+  git push "$authenticated_repo_url" --tags || { echo "Failed to push tags to repository: $repo_url"; exit 1; }
+  cd ..
 
   repo_api_url="https://api.github.com/repos/${repo_url#https://github.com/}/releases"
   release_response=$(curl -X POST \
@@ -65,6 +79,12 @@ if [ -f "files.txt" ]; then
     echo "Tagging file: $file_path"
     file_name=$(basename "$file_path" | tr -d '\r')
     tag_name="${file_name%.*}"
+
+    # Verificar si la etiqueta ya existe y, si es así, incrementarla
+    while git ls-remote --tags origin | grep -q "refs/tags/$tag_name"; do
+      echo "Tag $tag_name already exists for file $file_path. Incrementing tag version."
+      tag_name=$(increment_tag_version "$tag_name")
+    done
 
     # Verificar si ya estamos en un repositorio antes de intentar etiquetar el archivo
     if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
