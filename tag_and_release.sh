@@ -5,9 +5,10 @@
 while IFS= read -r repo_url; do
   echo "Tagging and releasing in $repo_url"
   repo_name=$(basename -s .git "$repo_url")
+  repo_name_clean=$(echo "$repo_name" | tr -d '\r')  # Eliminar cualquier carácter de retorno de carro
   authenticated_repo_url="https://${GH_TOKEN}@${repo_url#https://}"
   git clone "$authenticated_repo_url"
-  cd "$repo_name" || { echo "Failed to change directory to repository: $repo_name"; exit 1; }
+  cd "$repo_name_clean" || { echo "Failed to change directory to repository: $repo_name_clean"; exit 1; }
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
   
