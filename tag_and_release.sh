@@ -4,11 +4,11 @@
 
 increment_tag_version() {
   tag=$1
-  if [[ $tag =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    base=${tag%.*} # v0.0 or 0.0
+  if [[ $tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    base=${tag%.*} # v0.0
     patch=${tag##*.} # 72
     new_patch=$((patch + 1))
-    new_tag="${base}.${new_patch}" # v0.0.73 or 0.0.73
+    new_tag="${base}.${new_patch}" # v0.0.73
     echo "$new_tag"
   else
     echo "$tag"
@@ -80,32 +80,20 @@ if [ -f "files.txt" ]; then
     file_name=$(basename "$file_path" | tr -d '\r')
     tag_name="${file_name%.*}"
 
-    # Verificar si la etiqueta ya existe y, si es así, incrementarla y romper el bucle después de encontrar una versión disponible
-    original_tag_name="$tag_name"
+    # Verificar si la etiqueta ya existe y, si es así, incrementarla
     while git ls-remote --tags origin | grep -q "refs/tags/$tag_name"; do
       echo "Tag $tag_name already exists for file $file_path. Incrementing tag version."
       tag_name=$(increment_tag_version "$tag_name")
     done
-
-    if [[ "$tag_name" != "$original_tag_name" ]]; then
-      echo "Using incremented tag $tag_name for file $file_path."
-    fi
 
     # Verificar si ya estamos en un repositorio antes de intentar etiquetar el archivo
     if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
       git tag "$tag_name" --force || { echo "Failed to tag file $file_path with tag $tag_name"; continue; }
       git push origin "$tag_name" || { echo "Failed to push tag $tag_name for file $file_path"; continue; }
       echo "Tagged file $file_path with tag $tag_name"
-
-      # Realizar el commit con el mensaje incluyendo la versión del tag
-      git add "$file_path"
-      git commit -m "Tagging file $file_path with version $tag_name"
-      git push origin main || { echo "Failed to push commit for file $file_path"; continue; }
-      echo "Committed and pushed changes for file $file_path with tag $tag_name"
     else
       echo "Not inside a git repository. Skipping file tagging."
     fi
-    break # Detener el bucle después de etiquetar un archivo con éxito
   done < files.txt
 else
   echo "No files.txt found. Skipping file tagging."
